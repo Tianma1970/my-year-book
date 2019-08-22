@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Year Book
  * Plugin URI:        remlost.eu/portfolio
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       A Widget which shows the Year Book of a student👨‍🎓
  * Version:           1.0.0
  * Author:            Tillmann Weimer
  * Author URI:        remlost.eu/animals
