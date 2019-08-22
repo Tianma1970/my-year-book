@@ -83,7 +83,8 @@ class My_Year_Book {
 
 		$this->add_cpt();
 		$this->add_ct();
-		//$this->add_action_init();
+		
+		$this->init_acf();
 
 	}
 
@@ -358,5 +359,88 @@ class My_Year_Book {
 			"show_in_quick_edit" => false,
 			);
 		register_taxonomy( "w18yb_course", array( "w18yb_student" ), $args );
+		}
+
+		public function init_acf(){
+			//Add filter to fix ACF assests URL
+			add_filter('acf/settings/url', function(){
+				return plugin_dir_url(__FILE__) . 'acf/';
+			});
+			
+			//Hide the ACF menu
+			//add_filter('acf/settings/show_admin', function(){
+			//	return false;
+			//});
+
+			//Register Field Group Student Details
+			if( function_exists('acf_add_local_field_group') ):
+
+			acf_add_local_field_group(array(
+			'key' => 'group_5d5e8566cbf4e',
+			'title' => 'Student Details',
+			'fields' => array(
+				array(
+					'key' => 'field_5d5e85a2cf81a',
+					'label' => 'Attendance',
+					'name' => 'attendance',
+					'type' => 'number',
+					'instructions' => 'Attendance in percent',
+					'required' => 0,
+					'conditional_logic' => 0,
+					'wrapper' => array(
+						'width' => '',
+						'class' => '',
+						'id' => '',
+					),
+					'default_value' => '',
+					'placeholder' => '',
+					'prepend' => '',
+					'append' => '%',
+					'min' => 0,
+					'max' => '',
+					'step' => '',
+				),
+				array(
+					'key' => 'field_5d5e8622cf81b',
+					'label' => 'Detention Hours',
+					'name' => 'detention_hours',
+					'type' => 'number',
+					'instructions' => 'Number of hours spent in detention',
+					'required' => 0,
+					'conditional_logic' => 0,
+					'wrapper' => array(
+						'width' => '',
+						'class' => '',
+						'id' => '',
+					),
+					'default_value' => '',
+					'placeholder' => '',
+					'prepend' => '',
+					'append' => 'hours',
+					'min' => 0,
+					'max' => '',
+					'step' => '',
+				),
+			),
+			'location' => array(
+				array(
+					array(
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => 'w18yb_student',
+					),
+				),
+			),
+			'menu_order' => 0,
+			'position' => 'normal',
+			'style' => 'default',
+			'label_placement' => 'top',
+			'instruction_placement' => 'label',
+			'hide_on_screen' => '',
+			'active' => true,
+			'description' => '',
+			));
+
+			endif;
 		}
 }
