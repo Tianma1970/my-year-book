@@ -81,6 +81,10 @@ class My_Year_Book {
 
 		$this->register_filter_the_content();
 
+		$this->add_cpt();
+		$this->add_ct();
+		//$this->add_action_init();
+
 	}
 
 	/**
@@ -112,6 +116,11 @@ class My_Year_Book {
 		 * of the plugin.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-my-year-book-i18n.php';
+		
+		/**
+		 * Including ACF
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/acf/acf.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
@@ -241,17 +250,17 @@ class My_Year_Book {
 				$attendance = get_field('attendance');
 				$detention_hours = get_field('detention_hours');
 
-				$content .= '<div class="w18yb-student-details>';
+				$content .= '<div class="w18yb-student-details">';
 				$content .= '<h2>' . __('Student Details', 'w18-year-book') . '</h2>';
 		
 				if($attendance !== false){ 
-				$content .= '<span class="attendance">' .__('Attendance: ', 'w18-year-book') . '</span>' . 
-				$attendance .= ' %<br>';
+					$content .= '<span class="attendance">' .__('Attendance: ', 'w18-year-book') . '</span>' . 
+					$attendance .= ' %<br>';
 				}
 				
 				if($detention_hours !== false){ 
-				$content .= '<span class="detention-hours">' .__('Detention: ', 'w18-year-book') .  
-				$detention_hours .= ' hours<br>' . '</span>';
+				$content .= '<span class="detention-hours">' .__('Detention: ', 'w18-year-book') . '</span>' . 
+				$detention_hours .= ' hours<br>';
 				}
 				$content .= '</div>';
 			}
@@ -262,4 +271,92 @@ class My_Year_Book {
 			//5. Else return unmodified content
 			return $content;
 	}
+
+	/**
+	 * Add functions to be run through the init hook
+	 */
+	public function add_cpt() {
+		//Add hook for registration of CPT
+		add_action('init', [$this, 'register_cpts']);
+	}
+
+	public function add_ct() { 
+		//Add hook for registration of CT
+		add_action('init', [$this, 'register_cts']);
+		//Add hook for registration of ACF
+
+	}
+	
+	/**
+	 * Register custom post types
+	 */
+	public function register_cpts() {
+	/**
+	 * Post Type: Students.
+	 */
+
+	$labels = array(
+		"name" => __( "Students", "hestia" ),
+		"singular_name" => __( "Student", "hestia" ),
+	);
+
+	$args = array(
+		"label" => __( "Students", "hestia" ),
+		"labels" => $labels,
+		"description" => "",
+		"public" => true,
+		"publicly_queryable" => true,
+		"show_ui" => true,
+		"delete_with_user" => false,
+		"show_in_rest" => true,
+		"rest_base" => "",
+		"rest_controller_class" => "WP_REST_Posts_Controller",
+		"has_archive" => true,
+		"show_in_menu" => true,
+		"show_in_nav_menus" => false,
+		"exclude_from_search" => false,
+		"capability_type" => "post",
+		"map_meta_cap" => true,
+		"hierarchical" => false,
+		"rewrite" => array( "slug" => "students", "with_front" => true ),
+		"query_var" => true,
+		"menu_icon" => "dashicons-welcome-learn-more",
+		"supports" => array( "title", "editor", "thumbnail", "excerpt" ),
+	);
+
+	register_post_type( "w18yb_student", $args );
+
+	}
+	/**
+	 * Register cts
+	 */
+	public function register_cts() {
+			/**
+		 * Taxonomy: Courses.
+		 */
+
+		$labels = array(
+			"name" => __( "Courses", "hestia" ),
+			"singular_name" => __( "Course", "hestia" ),
+		);
+
+		$args = array(
+			"label" => __( "Courses", "hestia" ),
+			"labels" => $labels,
+			"public" => true,
+			"publicly_queryable" => true,
+			"hierarchical" => true,
+			"show_ui" => true,
+			"show_in_menu" => true,
+			"show_in_nav_menus" => true,
+			"query_var" => true,
+			"rewrite" => array( 'slug' => 'w18yb_course', 'with_front' => true, ),
+			"show_admin_column" => false,
+			"show_in_rest" => true,
+			"rest_base" => "w18yb_course",
+			"rest_controller_class" => "WP_REST_Terms_Controller",
+			"show_in_quick_edit" => false,
+			);
+		register_taxonomy( "w18yb_course", array( "w18yb_student" ), $args );
+		}
 }
